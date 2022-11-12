@@ -1,9 +1,30 @@
 <script>
+    // URL Params
+    const urlParams = new URLSearchParams(window.location.search);
+    let lang = urlParams.get("lang");
+
     // Setup Characters
-    var words = ["IT","L","IS","ASAMPM","A","C","QUARTER","DC","TWENTY","FIVE","X","HALF","S","TEN","F","TO","PAST","ERU","NINE","ONE","SIX","THREE","FOUR","FIVE","TWO","EIGHT","ELEVEN","SEVEN","TWELVE","TEN","SE","OCLOCK"]
-    var letters = []
-    var hours = ["TWELVE", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN"]
-    var minutes = [["OCLOCK"],["TFIVE", "PAST"],["TTEN", "PAST"],["A", "QUARTER", "PAST"],["TWENTY", "PAST"],["TWENTY", "TFIVE", "PAST"],["HALF", "PAST"],["TWENTY", "TFIVE", "TO"],["TWENTY", "TO"],["A", "QUARTER", "TO"],["TTEN", "TO"],["TFIVE", "TO"]]
+    let standard = []
+    let letters = []
+    let words = []
+    let hours = []
+    let minutes = []
+
+    // Really big arrays, yes, but at least I don't have to fix up the doubles every time.
+    switch(lang) {
+        case "el":
+            standard = ["Η", "ΩΡΑ", "ΕΙΝΑΙ"]
+            words = [["Η", "Η"],["Χ", ""],["ΩΡΑ","ΩΡΑ"],["Τ",""],["ΕΙΝΑΙ","ΕΙΝΑΙ"],["ΜΙΑ","ΜΙΑ"],["ΔΥΟ","ΔΥΟ"],["ΤΡΕΙΣ","ΤΡΕΙΣ"],["ΤΕΣΣΕΡΙΣ","ΤΕΣΣΕΡΙΣ"],["ΕΞΙ","ΕΞΙ"],["ΠΕΝΤΕ","ΠΕΝΤΕ"],["Ρ",""],["ΟΧΤΩ","ΟΧΤΩ"],["Η",""],["ΕΦΤΑ","ΕΦΤΑ"],["Ε",""],["ΕΝΤΕΚΑ","ΕΝΤΕΚΑ"],["ΔΩΔΕΚΑ","ΔΩΔΕΚΑ"],["ΕΝΝΙΑ","ΕΝΝΙΑ"],["ΔΕΚΑ","ΔΕΚΑ"],["Χ",""],["ΠΑΡΑ","ΠΑΡΑ"],["ΕΡ",""],["ΚΑΙ","ΚΑΙ"],["Ε",""],["ΤΕΤΑΡΤΟ","ΤΕΤΑΡΤΟ"],["ΕΙΚΟΣΙ","ΕΙΚΟΣΙ"],["Η",""],["ΔΕΚΑ","-ΔΕΚΑ"],["ΜΙΣΗ","ΜΙΣΗ"],["Ε",""],["ΠΕΝΤΕ","-ΠΕΝΤΕ"],["Ρ",""]]
+            hours = ["ΔΩΔΕΚΑ", "ΜΙΑ", "ΔΥΟ", "ΤΡΕΙΣ", "ΤΕΣΣΕΡΙΣ", "ΠΕΝΤΕ", "ΕΞΙ", "ΕΦΤΑ", "ΟΧΤΩ", "ΕΝΝΙΑ", "ΔΕΚΑ", "ΕΝΤΕΚΑ"]
+            minutes = [[],["-ΠΕΝΤΕ", "ΚΑΙ"],["-ΔΕΚΑ", "ΚΑΙ"],["ΤΕΤΑΡΤΟ", "ΚΑΙ"],["ΕΙΚΟΣΙ", "ΚΑΙ"],["ΕΙΚΟΣΙ", "-ΠΕΝΤΕ", "ΚΑΙ"],["ΜΙΣΗ", "ΚΑΙ"],["ΕΙΚΟΣΙ", "-ΠΕΝΤΕ", "ΠΑΡΑ"],["ΕΙΚΟΣΙ", "ΠΑΡΑ"],["A", "ΤΕΤΑΡΤΟ", "ΠΑΡΑ"],["-ΔΕΚΑ", "ΠΑΡΑ"],["-ΠΕΝΤΕ", "ΠΑΡΑ"]]
+            break;
+        default:
+            lang = "en";
+            standard = ["IT", "IS"]
+            words = [["IT","IT"],["L",""],["IS","IS"],["ASAMPM",""],["A","A"],["C",""],["QUARTER","QUARTER"],["DC",""],["TWENTY","TWENTY"],["FIVE","-FIVE"],["X",""],["HALF","HALF"],["S",""],["TEN","-TEN"],["F",""],["TO","TO"],["PAST","PAST"],["ERU",""],["NINE","NINE"],["ONE","ONE"],["SIX","SIX"],["THREE","THREE"],["FOUR","FOUR"],["FIVE","FIVE"],["TWO","TWO"],["EIGHT","EIGHT"],["ELEVEN","ELEVEN"],["SEVEN","SEVEN"],["TWELVE","TWELVE"],["TEN","TEN"],["SE",""],["OCLOCK","OCLOCK"]],hours = ["TWELVE", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN"]
+            minutes = [["OCLOCK"],["-FIVE", "PAST"],["-TEN", "PAST"],["A", "QUARTER", "PAST"],["TWENTY", "PAST"],["TWENTY", "-FIVE", "PAST"],["HALF", "PAST"],["TWENTY", "-FIVE", "TO"],["TWENTY", "TO"],["A", "QUARTER", "TO"],["-TEN", "TO"],["-FIVE", "TO"]]
+            break;
+    }
 
     let c = 0
     let curr = []
@@ -25,10 +46,10 @@
             curr.push({"letter": "", "parent": "", "glow": false})
             curr.push({"letter": "", "parent": "", "glow": false})
         }
-        for (let c of w) {
-            curr.push({"letter": c, "parent": w, "glow": false})
+        for (let c of w[0]) {
+            curr.push({"letter": c, "parent": w[1], "glow": false})
         }
-        c += w.length
+        c += w[0].length
         if (c == 11) {
             curr.push({"letter": "", "parent": "", "glow": false})
             curr.push({"letter": "", "parent": "", "glow": false})
@@ -49,38 +70,17 @@
     curr.push({"letter":"•", "parent":"min3", "glow": false})
     letters.push(curr)
 
-    // Corrections - yes, for loops are a waste
-    // Correct first to second five difference
-    let count = 0;
-    for (let line of letters) {
-        for (let l of line) {
-            if (l.parent == "FIVE") {
-                l.parent = "TFIVE";
-                count++;
-            }
-        }
-        if (count == 4) break;
-    }
-    // Correct first to second ten difference
-    count = 0;
-    for (let line of letters) {
-        for (let l of line) {
-            if (l.parent == "TEN") {
-                l.parent = "TTEN";
-                count++;
-            }
-        }
-        if (count == 3) break;
-    }
-
     // O' detail
-    letters[11][7].letter = "O'"
+    if (lang === "en") {
+        letters[11][7].letter = "O'"
+    }
 
     // Time set function
     function set() {
         reset();
-        toggle("IT", true);
-        toggle("IS", true);
+        for(let x of standard) {
+            toggle(x, true);
+        }
         let d = new Date();
         let h = d.getHours();
         let m = d.getMinutes();
@@ -154,6 +154,7 @@
 
 <main>
     <div class="clock">
+        {#if letters.length != 0}
         {#each letters as line}
             {#each line as letter}
                 <div class="letter" class:glow={letter.glow}>
@@ -161,6 +162,7 @@
                 </div>
             {/each}
         {/each}
+        {/if}
     </div>
 </main>
 
