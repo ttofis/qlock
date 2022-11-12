@@ -2,6 +2,17 @@
     // URL Params
     const urlParams = new URLSearchParams(window.location.search);
     let lang = urlParams.get("lang");
+    let color = urlParams.get("color");
+    let glow = urlParams.get("glow");
+    let customBack = urlParams.get("backColor");
+    let customOff = urlParams.get("offColor");
+    let customGlow = urlParams.get("glowColor");
+
+    if (glow == null) {
+        glow = "0px"
+    }else{
+        glow += "px"
+    }
 
     // Setup Characters
     let standard = []
@@ -10,7 +21,39 @@
     let hours = []
     let minutes = []
 
-    // Really big arrays, yes, but at least I don't have to fix up the doubles every time.
+    // Color variables
+    let backColor = "#242424"
+    let offColor = "#070707"
+    let glowColor = "white"
+    switch(color) {
+        case "peach":
+            backColor = "#eea990";
+            offColor = "#66545e";
+            glowColor = "#f6e0b5";
+            break;
+        case "accident":
+            backColor = "#121212";
+            offColor = "red";
+            glowColor = "yellow";
+            break;
+        case "oled":
+            backColor = "#000000";
+            offColor = "#323232";
+            glowColor = "white";
+            break;
+        case "white":
+            backColor = "#ffffff";
+            offColor = "#e0e0e0";
+            glowColor = "#000000";
+            break;
+        case "custom":
+            backColor = customBack;
+            offColor = customOff;
+            glowColor = customGlow;
+            break;
+    }
+
+    // Really big arrays, yes, but at least I don't have to fix up the doubles every load.
     switch(lang) {
         case "el":
             standard = ["Η", "ΩΡΑ", "ΕΙΝΑΙ"]
@@ -152,7 +195,7 @@
     run();
 </script>
 
-<main>
+<main style="--backgroundColor: {backColor}; --offColor: {offColor}; --glowColor: {glowColor}; --glowVar: {glow}">
     <div class="clock">
         {#if letters.length != 0}
         {#each letters as line}
@@ -172,6 +215,7 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
+        background-color: var(--backgroundColor);
     }
     .clock {
         font-family: 'Stick No Bills', sans-serif;
@@ -188,10 +232,11 @@
     }
     .letter p {
         font-size: min(5vh,5vw);
-        color: #070707;
+        color: var(--offColor);
         transition: color 0.5s;
     }
     .glow p {
-        color: white;
+        color: var(--glowColor);
+        text-shadow: 0 0 var(--glowVar) var(--glowColor);
     }
 </style>
