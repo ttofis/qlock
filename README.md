@@ -8,6 +8,7 @@ To apply a language use `?lang={en|el}`
 
 # Available color schemes
 Dark (default), peach, accident, oled, white
+
 Custom colors can be used like so:
 ```
 ?color=custom&backColor={color}&offColor={color}&glowColor={color}
